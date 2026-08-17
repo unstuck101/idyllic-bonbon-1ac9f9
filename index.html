@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>WAR ROOM LIVE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com/">
-<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="./WAR ROOM LIVE_files/css2" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -26,6 +27,10 @@
 html{
   height:100%;
   overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior-y:contain;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
 }
 body{
   min-height:100%;
@@ -187,7 +192,7 @@ input[type=text],input[type=email],textarea{
   caret-color:var(--red);
   max-width:100%;
 }
-input[type=text]::placeholder,textarea::placeholder{color:#2a2a38;font-style:italic}
+input[type=text]::placeholder,textarea::placeholder{color:#2a2a38}
 input[type=text]:focus,input[type=email]:focus,textarea:focus{
   border-left-color:var(--red);
   background:#101016;
@@ -342,7 +347,7 @@ input[type=tel]{
   caret-color:var(--red);
   max-width:100%;
 }
-input[type=tel]::placeholder{color:#2a2a38;font-style:italic}
+input[type=tel]::placeholder{color:#2a2a38}
 input[type=tel]:focus{
   border-left-color:var(--red);
   background:#101016;
@@ -350,6 +355,53 @@ input[type=tel]:focus{
 }
 .field.filled input[type=tel]{border-left-color:var(--gold)}
 .field.error input[type=tel]{border-left-color:var(--red2);animation:shake .35s ease}
+
+/* ── GO LIVE: NOW / SCHEDULE TOGGLE ── */
+.go-live-toggle{display:flex;gap:10px}
+.glt-btn{
+  flex:1;padding:13px 10px;
+  background:var(--field);
+  border:1px solid var(--border);
+  color:var(--muted2);
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;text-align:center;
+  cursor:pointer;transition:border-color .2s,background .2s,color .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.glt-btn.active{border-color:var(--gold);background:rgba(201,168,76,.08);color:var(--gold)}
+.glt-btn:not(.active):hover{border-color:var(--border2);color:var(--white)}
+.glt-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.schedule-time-wrap{margin-top:14px;max-height:0;overflow:hidden;transition:max-height .3s ease}
+.schedule-time-wrap.show{max-height:120px}
+.schedule-time-wrap .field-hint{margin-bottom:8px}
+
+input[type=datetime-local]{
+  width:100%;
+  background:var(--field);
+  border:1px solid var(--border);
+  border-left:3px solid transparent;
+  color:var(--white);
+  color-scheme:dark;
+  font-family:'Barlow',sans-serif;
+  font-size:16px;
+  font-weight:300;
+  padding:13px 16px;
+  outline:none;
+  border-radius:0;
+  -webkit-appearance:none;
+  appearance:none;
+  transition:border-color .25s,background .25s,box-shadow .25s;
+  caret-color:var(--gold);
+  max-width:100%;
+}
+input[type=datetime-local]:focus{
+  border-left-color:var(--gold);
+  background:#101016;
+  box-shadow:0 0 0 1px rgba(201,168,76,.18),inset 0 0 20px rgba(201,168,76,.03);
+}
+.field.filled input[type=datetime-local]{border-left-color:var(--gold)}
+.field.error input[type=datetime-local]{border-left-color:var(--red2);animation:shake .35s ease}
 
 /* ── FOOTER ── */
 footer{
@@ -402,6 +454,20 @@ footer{
 @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── MOBILE PERFORMANCE HARDENING ── */
+/* Continuous fixed-layer animations (grid drift, glow orbs, flicker) are cheap on
+   desktop GPUs but can tax a phone's compositor during scroll. Freeze them down
+   to a single static state under the phone breakpoint. */
+@media(max-width:768px){
+  body::before{animation:none;background-position:0 0}
+  .glow-orb,.glow-orb2{animation:none}
+  .main-title .live{animation:none;text-shadow:0 0 30px rgba(192,57,43,0.45)}
+}
+@media(prefers-reduced-motion:reduce){
+  body::before,.glow-orb,.glow-orb2,.main-title .live,.live-dot,.notify-dot{animation:none}
+  *{transition-duration:.01ms !important}
+}
+
 /* ── RESPONSIVE ── */
 @media(min-width:480px){
   .page{padding:52px 24px 72px}
@@ -448,7 +514,7 @@ footer{
       <div class="progress-wrap">
         <div class="progress-label">
           <span>Mission briefing</span>
-          <span class="pct" id="pct-label">0 of 5 fields</span>
+          <span class="pct" id="pct-label">0 of 6 fields</span>
         </div>
         <div class="progress-track">
           <div class="progress-bar" id="progress-bar"></div>
@@ -464,12 +530,12 @@ footer{
             <span class="field-hint">Step into the room and own it</span>
           </div>
         </div>
-        <input type="text" id="host" name="host" placeholder="Your name" required="" minlength="2" autocomplete="off">
+        <input type="text" id="host" name="host" placeholder="Your name" required minlength="2" autocomplete="off"/>
       </div>
 
       <div class="divider">
         <div class="divider-bar"></div>
-        <span class="divider-mark">◆</span>
+        <span class="divider-mark">&#9670;</span>
         <div class="divider-bar"></div>
       </div>
 
@@ -482,12 +548,12 @@ footer{
             <span class="field-hint">Your email</span>
           </div>
         </div>
-        <input type="email" id="email" name="email" placeholder="your@email.com" required="" autocomplete="off">
+        <input type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="off"/>
       </div>
 
       <div class="divider">
         <div class="divider-bar"></div>
-        <span class="divider-mark">◆</span>
+        <span class="divider-mark">&#9670;</span>
         <div class="divider-bar"></div>
       </div>
 
@@ -500,12 +566,12 @@ footer{
             <span class="field-hint">Your phone number</span>
           </div>
         </div>
-        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required="" autocomplete="off">
+        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required autocomplete="off"/>
       </div>
 
       <div class="divider">
         <div class="divider-bar"></div>
-        <span class="divider-mark">◆</span>
+        <span class="divider-mark">&#9670;</span>
         <div class="divider-bar"></div>
       </div>
 
@@ -518,23 +584,48 @@ footer{
             <span class="field-hint">What's the battle plan for this session?</span>
           </div>
         </div>
-        <input type="text" id="topic" name="topic" placeholder="Identity, Marriage, Purpose, Leadership..." required="" minlength="3" autocomplete="off">
+        <input type="text" id="topic" name="topic" placeholder="Identity, Marriage, Purpose, Leadership..." required minlength="3" autocomplete="off"/>
       </div>
 
       <div class="divider">
         <div class="divider-bar"></div>
-        <span class="divider-mark">◆</span>
+        <span class="divider-mark">&#9670;</span>
         <div class="divider-bar"></div>
       </div>
 
-      <!-- Field 5 -->
-      <div class="cta-section" id="f5-wrap">
+      <!-- Field 5 - Go live now or schedule -->
+      <div class="field" id="f5">
+        <div class="field-header">
+          <div class="field-num">05</div>
+          <div>
+            <label class="field-label" id="golive-label">When do you want to go live <span style="color:var(--red)">*</span></label>
+            <span class="field-hint">Right now, or lock in a time that works</span>
+          </div>
+        </div>
+        <div class="go-live-toggle" role="group" aria-labelledby="golive-label">
+          <button type="button" class="glt-btn active" id="glt-now" aria-pressed="true">Go Live Now</button>
+          <button type="button" class="glt-btn" id="glt-schedule" aria-pressed="false">Schedule For Later</button>
+        </div>
+        <div class="schedule-time-wrap" id="schedule-time-wrap">
+          <span class="field-hint" style="display:block">Pick the date and time</span>
+          <input type="datetime-local" id="scheduled_at" name="scheduled_at" aria-label="Scheduled date and time"/>
+        </div>
+      </div>
+
+      <div class="divider">
+        <div class="divider-bar"></div>
+        <span class="divider-mark">&#9670;</span>
+        <div class="divider-bar"></div>
+      </div>
+
+      <!-- Field 6 -->
+      <div class="cta-section" id="f6-wrap">
         <div class="cta-label-row">
-          <div class="cta-icon">05</div>
+          <div class="cta-icon">06</div>
           <span class="cta-title">What are you inviting guys to do<span class="cta-req">*</span></span>
         </div>
         <p class="cta-hint">The move you want them to make by the end of this live</p>
-        <textarea id="cta" name="cta" placeholder="Join the Brotherhood, book a call, take the audit, show up with their struggle..." required="" minlength="10"></textarea>
+        <textarea id="cta" name="cta" placeholder="Join the Brotherhood, book a call, take the audit, show up with their struggle..." required minlength="10"></textarea>
       </div>
 
       <button class="btn-submit" id="submit-btn" onclick="handleSubmit()">
@@ -546,19 +637,19 @@ footer{
 
     <!-- SUCCESS -->
     <div class="success-wrap" id="success-wrap">
-      <div class="success-icon-ring">⚔</div>
-      <div class="success-title">You're Locked In.</div>
-      <p class="success-msg">
+      <div class="success-icon-ring">&#9876;</div>
+      <div class="success-title" id="success-title">You're Locked In.</div>
+      <p class="success-msg" id="success-msg">
         War Room Live briefing received.<br>
         The brothers have been notified. Now get in the room.
       </p>
       <div class="zoom-block">
         <div class="zoom-label">
           <div class="live-dot" style="width:6px;height:6px;flex-shrink:0"></div>
-          <span>Your War Room Link</span>
+          <span id="zoom-label-text">Your War Room Link</span>
         </div>
         <a class="zoom-btn" href="https://us06web.zoom.us/j/4597499183?pwd=jqQVHc6bOy5Qub5p4VHeq5IQJ8fyJv.1" target="_blank" rel="noopener">
-          ►&nbsp; JOIN THE WAR ROOM NOW
+          <span id="zoom-btn-label">&#9658;&nbsp; JOIN THE WAR ROOM NOW</span>
         </a>
         <p class="zoom-url">us06web.zoom.us/j/4597499183</p>
       </div>
@@ -574,10 +665,10 @@ footer{
 
 <!-- NOTIFICATION POPUP -->
 <div class="notify-popup" id="notify-popup">
-  <button class="notify-close" onclick="closeNotify()" aria-label="Close">×</button>
+  <button class="notify-close" onclick="closeNotify()" aria-label="Close">&#215;</button>
   <div class="notify-top">
     <div class="notify-dot"></div>
-    <span class="notify-head">Brotherhood Alert</span>
+    <span class="notify-head" id="notify-head-text">Brotherhood Alert</span>
   </div>
   <div class="notify-host" id="notify-host-name">Travis Ala</div>
   <p class="notify-body" id="notify-body-text">We've informed others that you are going live. The brothers are on their way.</p>
@@ -588,29 +679,82 @@ footer{
 var WEBHOOK='https://services.leadconnectorhq.com/hooks/4Hj0A6ZJ02zkgLvAo6IZ/webhook-trigger/cb53f70e-e8fc-4e7e-883e-fd521b6b8a54';
 var notifyTimer=null;
 
+var goLiveMode='now'; /* 'now' | 'scheduled' */
+var scheduledInput=document.getElementById('scheduled_at');
+var scheduleWrap=document.getElementById('schedule-time-wrap');
+var gltNowBtn=document.getElementById('glt-now');
+var gltScheduleBtn=document.getElementById('glt-schedule');
+var f5wrap=document.getElementById('f5');
+
+function isGoLiveFieldValid(){
+  if(goLiveMode==='now')return true;
+  if(!scheduledInput.value)return false;
+  var picked=new Date(scheduledInput.value);
+  return !isNaN(picked.getTime())&&picked.getTime()>Date.now();
+}
+
+function setMinScheduleTime(){
+  var now=new Date();
+  now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
+  scheduledInput.min=now.toISOString().slice(0,16);
+}
+
+function setGoLiveMode(mode){
+  goLiveMode=mode;
+  if(mode==='scheduled'){
+    gltScheduleBtn.classList.add('active');gltScheduleBtn.setAttribute('aria-pressed','true');
+    gltNowBtn.classList.remove('active');gltNowBtn.setAttribute('aria-pressed','false');
+    scheduleWrap.classList.add('show');
+    setMinScheduleTime();
+    scheduledInput.setAttribute('required','required');
+    setTimeout(function(){scheduledInput.focus();},50);
+  } else {
+    gltNowBtn.classList.add('active');gltNowBtn.setAttribute('aria-pressed','true');
+    gltScheduleBtn.classList.remove('active');gltScheduleBtn.setAttribute('aria-pressed','false');
+    scheduleWrap.classList.remove('show');
+    scheduledInput.removeAttribute('required');
+    f5wrap.classList.remove('error');
+  }
+  updateProgress();
+}
+
+gltNowBtn.addEventListener('click',function(){setGoLiveMode('now')});
+gltScheduleBtn.addEventListener('click',function(){setGoLiveMode('scheduled')});
+scheduledInput.addEventListener('input',function(){
+  f5wrap.classList.remove('error');
+  updateProgress();
+});
+
 var fields=[
-  {el:document.getElementById('host'),wrap:document.getElementById('f1'),isCta:false},
-  {el:document.getElementById('email'),wrap:document.getElementById('f2'),isCta:false},
-  {el:document.getElementById('phone'),wrap:document.getElementById('f3'),isCta:false},
-  {el:document.getElementById('topic'),wrap:document.getElementById('f4'),isCta:false},
-  {el:document.getElementById('cta'),wrap:document.getElementById('f5-wrap'),isCta:true}
+  {el:document.getElementById('host'),wrap:document.getElementById('f1')},
+  {el:document.getElementById('email'),wrap:document.getElementById('f2')},
+  {el:document.getElementById('phone'),wrap:document.getElementById('f3')},
+  {el:document.getElementById('topic'),wrap:document.getElementById('f4')},
+  {el:null,wrap:f5wrap,check:isGoLiveFieldValid},
+  {el:document.getElementById('cta'),wrap:document.getElementById('f6-wrap')}
 ];
 
+function fieldIsFilled(f){
+  return f.check?f.check():f.el.value.trim().length>1;
+}
+
 function updateProgress(){
-  var filled=fields.filter(function(f){return f.el.value.trim().length>1});
-  document.getElementById('progress-bar').style.width=Math.round((filled.length/fields.length)*100)+'%';
-  document.getElementById('pct-label').textContent=filled.length+' of '+fields.length+' fields';
+  var filledCount=0;
   fields.forEach(function(f){
-    if(f.el.value.trim().length>1){
+    if(fieldIsFilled(f)){
+      filledCount++;
       f.wrap.classList.add('filled');
       f.wrap.classList.remove('error');
     } else {
       f.wrap.classList.remove('filled');
     }
   });
+  document.getElementById('progress-bar').style.width=Math.round((filledCount/fields.length)*100)+'%';
+  document.getElementById('pct-label').textContent=filledCount+' of '+fields.length+' fields';
 }
 
 fields.forEach(function(f){
+  if(!f.el)return;
   f.el.addEventListener('input',updateProgress);
   f.el.addEventListener('blur',function(){
     if(f.el.value.trim().length>0&&!f.el.checkValidity()){
@@ -624,9 +768,10 @@ function handleSubmit(){
   var allGood=true;
   var firstBad=null;
   fields.forEach(function(f){
-    if(!f.el.value.trim()||!f.el.checkValidity()){
+    var ok=f.check?f.check():(f.el.value.trim()&&f.el.checkValidity());
+    if(!ok){
       f.wrap.classList.add('error');
-      if(allGood){firstBad=f.el;allGood=false;}
+      if(allGood){firstBad=f.el||scheduledInput;allGood=false;}
     }
   });
   if(!allGood){if(firstBad)firstBad.focus();return;}
@@ -636,12 +781,16 @@ function handleSubmit(){
   btn.style.opacity='.55';
   btn.style.pointerEvents='none';
 
+  var scheduledAtISO=goLiveMode==='scheduled'?new Date(scheduledInput.value).toISOString():'';
+
   var payload={
     host:document.getElementById('host').value.trim(),
     email:document.getElementById('email').value.trim(),
     phone:document.getElementById('phone').value.trim(),
     topic:document.getElementById('topic').value.trim(),
     call_to_action:document.getElementById('cta').value.trim(),
+    go_live_mode:goLiveMode,
+    scheduled_at:scheduledAtISO,
     submitted_at:new Date().toISOString(),
     source:'War Room Live Intake Form'
   };
@@ -652,10 +801,34 @@ function handleSubmit(){
     body:JSON.stringify(payload)
   })
   .catch(function(){})
-  .finally(function(){transitionToSuccess()});
+  .finally(function(){transitionToSuccess(payload)});
 }
 
-function transitionToSuccess(){
+function formatScheduled(iso){
+  var d=new Date(iso);
+  return d.toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+}
+
+function applySuccessCopy(payload){
+  var titleEl=document.getElementById('success-title');
+  var msgEl=document.getElementById('success-msg');
+  var zoomLabel=document.getElementById('zoom-label-text');
+  var zoomBtnLabel=document.getElementById('zoom-btn-label');
+  if(payload.go_live_mode==='scheduled'){
+    var when=formatScheduled(payload.scheduled_at);
+    titleEl.textContent="You're Scheduled.";
+    msgEl.innerHTML='War Room Live briefing received.<br>Locked in for <strong>'+when+'</strong>. The brothers will be notified as it approaches.';
+    zoomLabel.textContent='Your War Room Link (active at your scheduled time)';
+    zoomBtnLabel.innerHTML='&#9658;&nbsp; SAVE THE WAR ROOM LINK';
+  } else {
+    titleEl.textContent="You're Locked In.";
+    msgEl.innerHTML='War Room Live briefing received.<br>The brothers have been notified. Now get in the room.';
+    zoomLabel.textContent='Your War Room Link';
+    zoomBtnLabel.innerHTML='&#9658;&nbsp; JOIN THE WAR ROOM NOW';
+  }
+}
+
+function transitionToSuccess(payload){
   var fw=document.getElementById('form-wrap');
   var sw=document.getElementById('success-wrap');
   fw.style.transition='opacity .35s ease,transform .35s ease';
@@ -664,13 +837,24 @@ function transitionToSuccess(){
   setTimeout(function(){
     fw.style.display='none';
     sw.style.display='block';
-    showNotify();
+    applySuccessCopy(payload);
+    showNotify(payload);
   },350);
 }
 
-function showNotify(){
+function showNotify(payload){
   var hostName=document.getElementById('host').value.trim()||'A brother';
   document.getElementById('notify-host-name').textContent=hostName;
+
+  var headEl=document.getElementById('notify-head-text');
+  var bodyEl=document.getElementById('notify-body-text');
+  if(payload&&payload.go_live_mode==='scheduled'){
+    headEl.textContent='Session Scheduled';
+    bodyEl.textContent="You're set for "+formatScheduled(payload.scheduled_at)+". We'll alert the brothers as it gets close.";
+  } else {
+    headEl.textContent='Brotherhood Alert';
+    bodyEl.textContent="We've informed others that you are going live. The brothers are on their way.";
+  }
 
   var popup=document.getElementById('notify-popup');
   var bar=document.getElementById('notify-prog-bar');
@@ -695,7 +879,8 @@ function closeNotify(){
   if(notifyTimer)clearTimeout(notifyTimer);
   document.getElementById('notify-popup').classList.remove('show');
 }
+
+updateProgress();
 </script>
-
-
-</body></html>
+</body>
+</html>
